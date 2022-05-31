@@ -1,18 +1,15 @@
 import {useI18n} from '@codeimage/locale';
-import {getActiveEditorStore} from '@codeimage/store/editor/createActiveEditor';
 import {getRootEditorStore} from '@codeimage/store/editor/createEditors';
 import {copyToClipboard$} from '@codeimage/store/effects/onCopyToClipboard';
 import {onThemeChange$} from '@codeimage/store/effects/onThemeChange';
-import {frame$, setScale} from '@codeimage/store/frame';
+import {setScale} from '@codeimage/store/frame';
 import {connectStoreWithQueryParams} from '@codeimage/store/plugins/connect-store-with-query-params';
-import {terminal$} from '@codeimage/store/terminal';
 import {Box, LoadingOverlay, PortalHost, SnackbarHost} from '@codeimage/ui';
 import {initEffects} from '@ngneat/effects';
 import {createEffect, createSignal, on, Show} from 'solid-js';
 import {BottomBar} from './components/BottomBar/BottomBar';
-import {CustomEditor} from './components/CustomEditor/CustomEditor';
+import {ExportableCanvas} from './components/Canvas/ExportableCanvas';
 import {Footer} from './components/Footer/Footer';
-import {Frame} from './components/Frame/Frame';
 import {FrameHandler} from './components/Frame/FrameHandler';
 import {KeyboardShortcuts} from './components/KeyboardShortcuts/KeyboardShortcuts';
 import {EditorSidebar} from './components/PropertyEditor/EditorSidebar';
@@ -20,10 +17,8 @@ import {SidebarPopoverHost} from './components/PropertyEditor/SidebarPopoverHost
 import {Canvas} from './components/Scaffold/Canvas/Canvas';
 import {Scaffold} from './components/Scaffold/Scaffold';
 import {Sidebar} from './components/Scaffold/Sidebar/Sidebar';
-import {DynamicTerminal} from './components/Terminal/dynamic/DynamicTerminal';
 import {ThemeSwitcher} from './components/ThemeSwitcher/ThemeSwitcher';
 import {Toolbar} from './components/Toolbar/Toolbar';
-import {fromObservableObject} from './core/hooks/from-observable-object';
 import {useModality} from './core/hooks/isMobile';
 import {useEffects} from './core/store/use-effect';
 import {uiStore} from './state/ui';
@@ -35,8 +30,6 @@ export function App() {
   document.querySelector('#launcher')?.remove();
   const [frameRef, setFrameRef] = createSignal<HTMLElement>();
   const [portalHostRef, setPortalHostRef] = createSignal<HTMLElement>();
-  const frame = fromObservableObject(frame$);
-  const terminal = fromObservableObject(terminal$);
   const modality = useModality();
   const [, {locale}] = useI18n();
   connectStoreWithQueryParams();
@@ -66,7 +59,7 @@ export function App() {
           </Box>
         </Show>
 
-        <FrameHandler ref={setFrameRef} onScaleChange={setScale}>
+        <FrameHandler hidden={false} onScaleChange={setScale}>
           <Show
             when={ready()}
             fallback={
@@ -75,34 +68,7 @@ export function App() {
               </div>
             }
           >
-            <Frame
-              radius={0}
-              padding={frame.padding}
-              background={frame.background}
-              opacity={frame.opacity}
-              visible={frame.visible}
-            >
-              <DynamicTerminal
-                type={terminal.type}
-                readonlyTab={false}
-                tabName={terminal.tabName}
-                showTab={true}
-                shadow={terminal.shadow}
-                background={terminal.background}
-                accentVisible={terminal.accentVisible}
-                darkMode={terminal.darkMode}
-                textColor={terminal.textColor}
-                showHeader={terminal.showHeader}
-                showGlassReflection={terminal.showGlassReflection}
-                showWatermark={terminal.showWatermark}
-                opacity={terminal.opacity}
-                alternativeTheme={terminal.alternativeTheme}
-              >
-                <Show when={getActiveEditorStore().editor()}>
-                  <CustomEditor />
-                </Show>
-              </DynamicTerminal>
-            </Frame>
+            <ExportableCanvas />
           </Show>
         </FrameHandler>
 

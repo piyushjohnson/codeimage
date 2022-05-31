@@ -22,6 +22,7 @@ const exportExclude = _exportExclude;
 
 type FrameHandlerProps = WithRef<'div'> & {
   onScaleChange: (scale: number) => void;
+  hidden?: boolean;
 };
 
 export function FrameHandler(
@@ -77,6 +78,7 @@ export function FrameHandler(
       >
         <div
           class={styles.content}
+          style={{display: props.hidden ? 'none' : 'block'}}
           ref={createRef<'div'>(props, e => {
             setInternalRef(() => e);
           })}

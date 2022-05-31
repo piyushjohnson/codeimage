@@ -21,7 +21,7 @@ export const DynamicTerminal: ParentComponent<DynamicTerminalProps> = (
     () =>
       terminalThemes.entries[
         props.type as typeof terminalThemes['keys'][number]
-      ].component,
+      ]?.component,
   );
 
   return (

@@ -12,11 +12,13 @@ export function exportExclude(
     enumerable: true,
     writable: true,
   });
+  el.setAttribute('data-export-exclude', exclude() ? 'true' : 'false');
 
   createEffect(
     on(exclude, exclude => {
       if (el.hasOwnProperty(EXPORT_EXCLUDE) && el[EXPORT_EXCLUDE] !== exclude) {
         el[EXPORT_EXCLUDE] = exclude;
+        el.setAttribute('data-export-exclude', exclude ? 'true' : 'false');
       }
     }),
   );
